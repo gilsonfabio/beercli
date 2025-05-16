@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
-import { Button, KeyboardAvoidingView, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { api } from "@/server/api";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useEffect, useState } from 'react';
+import { Button, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
 export default function GerQRCode() {
   const [text, setText] = useState('');
   const [qrValue, setQrValue] = useState('');
+  const [dadUser, setDadUser] = useState([]);
+  const [cpf, setCpf] = useState('');
+
+  const router = useRouter();
+  const {idUsr, name, title, saldo } = useLocalSearchParams();
 
   const handleGenerate = () => {
     setQrValue(text);
   };
+
+  useEffect(() => {
+    
+    api.get(`busUser/${idUsr}`).then(response => { 
+      setText(response.data);                    
+    })
+
+  }, []);
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <TextInput
-        style={styles.input}
-        placeholder="Digite algo para gerar o QR Code"
-        value={text}
-        onChangeText={setText}
-      />
+      <Text>{text}</Text>
       <Button title="Gerar QR Code" onPress={handleGenerate} />
       <View style={styles.qrContainer}>
         {qrValue !== '' && <QRCode value={qrValue} size={200} />}
