@@ -144,6 +144,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#facc15",
         borderRadius: 12,
         justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        marginTop: 5,
     },
 
     txtButton: {

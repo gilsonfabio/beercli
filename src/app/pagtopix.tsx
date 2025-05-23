@@ -34,7 +34,7 @@ export default function PagtoPix() {
             try {
                 console.log('Gerando QR Code para:', params.creId);
 
-                const { data } = await axios.post('http://10.111.135.208:3333/authorize', {
+                const { data } = await axios.post('https://backbeer.vercel.app/authorize', {
                     creUsrId: params.idUsr,
                     creId: params.creId,
                     creValor: params.creValor,
