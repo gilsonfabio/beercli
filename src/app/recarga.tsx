@@ -6,43 +6,51 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-nativ
 import Header from "@/components/header";
 import { api } from '@/server/api';
 
-type userProps = {
-    user?: string;
-    nomUser?: string;
-    sysTitle?: string;
-    saldo?: string;
-}
-
 type paramsProps = {
     idUsr: string;
     name: string;
     title: string;
     saldo: string;    
 }
- 
+
 export default function Recarga(){
-    const [vlrRec, setVlrRec] = useState('');
+    const { idUsr, name, title } = useLocalSearchParams<paramsProps>();
 
-    const { idUsr, name, title, saldo } = useLocalSearchParams<paramsProps>();
-
-    const [atualiza, setAtualiza] = useState(0);
-    const [creUsrId, setCreUsrId] = useState('');
-    const [idCre, setIdCre] = useState(0);
     const [creValor, setCreValor] = useState('');
 
+    function handleChangeValue(text: string) {
+        const cleanValue = text.replace(/\D/g, ''); // Remove tudo que não for número
+
+        if (!cleanValue) {
+            setCreValor('');
+            return;
+        }
+
+        const numericValue = (Number(cleanValue) / 100).toFixed(2);
+        const [integerPart, decimalPart] = numericValue.split('.');
+
+        const integerWithSeparator = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+        const formatted = `${integerWithSeparator},${decimalPart}`;
+        setCreValor(formatted);
+    }
 
     async function GeraNovCredito() {
         try {
+            const valorAPI = creValor.replace(/\./g, '').replace(',', '.'); // Remove pontos e troca vírgula por ponto
+
             const response = await api.post(`/newcredito`, {
                 creUsrId: idUsr, 
-                creValor: vlrRec, 
-            }) 
-            router.push(`./pagtopix", params: {idUsr, name, title, creValor` as any );          
+                creValor: valorAPI,  
+            });
+            let nrocredito = response.data.creId
+            console.log('gerou credito nro.:', nrocredito)
+            router.push(`/pagtopix?idUsr=${idUsr}&name=${name}&title=${title}&creId=${nrocredito}&creValor=${creValor}` as any);
         } catch (error) {
             if (isAxiosError(error)) {
-                return Alert.alert(error.response?.data)
+                return Alert.alert(error.response?.data);
             }
-          Alert.alert("Não foi possÃ­vel entrar.")
+            Alert.alert("Não foi possível gerar o crédito.");
         }
     }
 
@@ -50,15 +58,15 @@ export default function Recarga(){
         <View style={styles.container}>
             <Header user={idUsr} nomUser={name} sysTitle={title} />
             <View>
-                <View >
+                <View>
                     <Text style={styles.label}>Valor Recarga</Text>
                     <TextInput 
                         style={styles.input}
                         placeholderTextColor="#fafafa" 
                         placeholder="Informe valor recarga" 
-                        onChangeText={setCreValor} 
+                        onChangeText={handleChangeValue} 
                         value={creValor} 
-                        keyboardType="decimal-pad"
+                        keyboardType="numeric"
                     />
                 </View>
                 <View>
@@ -73,8 +81,6 @@ export default function Recarga(){
         </View>
     )
 }
-
-// router.push({ pathname: "/screens/PagtoPix", params: {idUsr, name, vlrRec, idCre} });
 
 const styles = StyleSheet.create({
     container: {
@@ -146,5 +152,4 @@ const styles = StyleSheet.create({
         color: "#000",
         textAlign: 'center',        
     },
-
 })

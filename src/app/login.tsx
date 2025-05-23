@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import {
     Alert,
     Animated,
+    Dimensions,
     Easing,
     Keyboard,
     Platform,
@@ -19,6 +20,8 @@ import {
     View
 } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 export default function Login() {
     const navigation = useNavigation();
@@ -121,19 +124,33 @@ export default function Login() {
         }
     }
 
+    async function handleResetPassword() {
+        try {
+            router.push(`./register`);
+        } catch (error) {
+            Vibration.vibrate(100);
+            triggerShake();
+
+            if (isAxiosError(error)) {
+                return Alert.alert(error.response?.data);
+            }
+            Alert.alert("Não foi possível entrar.");
+        }
+    }
+
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAwareScrollView
-                style={{ flex: 1 }}
-                contentContainerStyle={styles.scrollContentContainer}
-                enableOnAndroid
-                extraScrollHeight={Platform.OS === 'ios' ? 0 : 120}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-                <LinearGradient
-                    colors={['#facc15', '#000']} 
-                    style={styles.gradientBackground}
+        <LinearGradient
+            colors={['#7c2d12', '#000']}
+            style={styles.fullScreenGradient}
+        >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <KeyboardAwareScrollView
+                    style={styles.keyboardAwareScrollView} 
+                    contentContainerStyle={styles.scrollContentContainer}
+                    enableOnAndroid={true} 
+                    extraScrollHeight={Platform.OS === 'ios' ? 0 : 50} 
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
                 >
                     <Animated.View style={[styles.animatedContainer, {
                         opacity: fadeAnim,
@@ -157,7 +174,6 @@ export default function Login() {
                                     placeholder="Informe seu email"
                                     onChangeText={setEmail}
                                     value={email}
-                                    autoFocus
                                     keyboardType="email-address"
                                     autoCapitalize="none"
                                 />
@@ -191,28 +207,39 @@ export default function Login() {
                                 </Animated.View>
                             </Pressable>
                         </View>
-                        <View style={{ marginTop: 20 }}>
+                        <View style={{ flexDirection:'row', justifyContent: 'space-between',width: '100%', marginTop: 20 }}>
                             <Pressable onPress={handleCadastro}>
                                 <Text style={styles.txtCadastro}>Criar Conta</Text>
                             </Pressable>
+                            <Pressable onPress={handleResetPassword}>
+                                <Text style={styles.txtCadastro}>Esqueci a senha</Text>
+                            </Pressable>
                         </View>
                     </Animated.View>
-                </LinearGradient>
-            </KeyboardAwareScrollView>
-        </TouchableWithoutFeedback>
+                </KeyboardAwareScrollView>
+            </TouchableWithoutFeedback>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
-    scrollContentContainer: {
-        flexGrow: 1,
-        justifyContent: 'center',
+    fullScreenGradient: {
+        flex: 1, 
+        width: '100%', 
+        height: screenHeight, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
     },
-    gradientBackground: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 20,
+    keyboardAwareScrollView: {
+        flex: 1, 
+        width: '100%', 
+    },
+    scrollContentContainer: {
+        flexGrow: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        paddingHorizontal: 20, 
+        paddingBottom: 20, 
     },
     animatedContainer: {
         alignItems: 'center',
@@ -273,11 +300,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     button: {
+        width: 300,
         marginTop: 30,
         backgroundColor: '#fff',
-        paddingVertical: 14,
+        paddingVertical: 12,
         paddingHorizontal: 50,
-        borderRadius: 30,
+        borderRadius: 10,
         alignItems: 'center',
         elevation: 3,
         shadowColor: '#000',
@@ -295,6 +323,7 @@ const styles = StyleSheet.create({
         color: '#dc2626', 
         fontSize: 16,
         fontWeight: 'bold',
+        paddingHorizontal: 20,
     },
 
     register: {
