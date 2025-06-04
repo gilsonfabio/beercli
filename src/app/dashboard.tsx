@@ -2,7 +2,7 @@ import Header from "@/components/header";
 import { Link, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import Produtos from "./produtos";
+import Historico from "./historico";
 
 
 type paramsProps = {
@@ -41,7 +41,7 @@ export default function Dashboard(){
                     </Pressable>
                 </Link>
             </View>
-            <Produtos />
+            <Historico idUsr={idUsr}/>
         </View>
     )
 }
