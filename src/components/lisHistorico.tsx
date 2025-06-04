@@ -1,4 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
+import moment from 'moment';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
@@ -45,17 +46,22 @@ const LisHistorico = ({ data }:any) => {
   return (
     <View style={styles.container}>
         <View style={styles.box}>
-            <View>
+            <View style={styles.boxInter}>
                 <Image source={{uri: `https://thumbs2.imgbox.com/${data.proAvatar}`}} resizeMode="cover" style={styles.imgLogo} />
-                <View style={styles.boxDescricao}>
-                    <Text style={styles.txtDescricao}>{data.conData} - {data.conHora}</Text>
-                </View>
-                <View style={styles.boxDescricao}>
-                    <Text style={styles.txtDescricao}>{data.proDescricao}</Text>
-                </View>
-                <View>
-                    <Text>{data.proReferencia}</Text>
-                </View>              
+                <View style={styles.boxDados}>
+                    <View style={styles.boxDescricao}>
+                      <Text style={styles.txtDescricao}>{moment(data.conData).format('DD/MM/YYYY')} - {data.conHora}</Text>
+                    </View>
+                    <View style={styles.boxDescricao}>
+                      <Text style={styles.txtDescricao}>{data.proDescricao}</Text>
+                    </View>
+                    <View>
+                      <Text>{data.proReferencia}</Text>
+                    </View>
+                    <View>
+                      <Text>{data.conPrdQtd} ml</Text>
+                    </View>
+                </View>                
             </View>             
         </View>  
     </View>
@@ -70,8 +76,8 @@ const styles = StyleSheet.create({
     },
 
     imgLogo: {
-        width: 180,
-        height: 200,
+        width: 80,
+        height: 100,
         alignItems: 'center',
         borderRadius: 10,      
     },
@@ -84,10 +90,18 @@ const styles = StyleSheet.create({
         marginRight: 5,
         marginBottom: 5,
     },
+
+    boxInter: {
+      flexDirection: 'row'
+    },
+
+    boxDados: {
+      marginLeft: 5,
+    },
     
     boxDescricao: {
         width: "100%",
-        height: 40,
+        height: 20,
     }, 
 
     txtDescricao: {

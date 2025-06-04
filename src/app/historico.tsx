@@ -51,7 +51,7 @@ export default function Historico({ idUsr }:props) {
             <FlatList
                 data={historico}
                 horizontal={false}
-                numColumns={2}
+                numColumns={1}
                 renderItem={({item}) => <LisHistorico data={item} />}
                 keyExtractor={(item) => item.conId}
             />

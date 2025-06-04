@@ -1,6 +1,6 @@
-import React, { useState} from 'react';
-import { TouchableOpacity, View, Image, Text, Dimensions, Pressable, StyleSheet} from 'react-native';
-import {Link, router, useLocalSearchParams } from "expo-router";
+import { Link, useLocalSearchParams } from "expo-router";
+import React from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type produtoProps = {
   idProd: string; 
